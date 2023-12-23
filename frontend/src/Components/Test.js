@@ -52,7 +52,7 @@ class Test extends React.Component {
 
     render() {
         return (
-            <div className='container'>
+            <div className='container' style={{ marginBottom: 80, marginTop: 50 }}>
                 <div className="header">
                     <div className="text">Create a test</div>
                     {/* <div className="underline"></div> */}

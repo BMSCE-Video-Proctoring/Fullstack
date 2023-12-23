@@ -57,7 +57,7 @@ class LoginPage extends Component {
             <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet" />
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
             <button  className='form-control btn btn-primary rounded submit px-3' style={{ margin: 20 }} ><Link to="/">Back</Link> {/* Use Link */}</button>
-            <div className="container">
+            <div className="container" style={{ marginBottom: 80, marginTop: 50  }}>
                 <div className="row justify-content-center">
                     <div className="col-md-6 text-center mb-4">
                         <h2 className="heading-section" style={{ fontWeight: 550 }}>BMSCE Procturing</h2>

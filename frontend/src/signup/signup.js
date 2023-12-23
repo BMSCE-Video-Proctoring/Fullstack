@@ -50,9 +50,9 @@ class RegistrationForm extends Component {
 
   render() {
     return (
-      <div className='body'>
+      <div>
         {/* Registration form JSX */}
-        <div className="container">
+        <div className="container" style={{marginBottom: 80, marginTop: 50}}>
           <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet" />
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
           <div className="row justify-content-center">
