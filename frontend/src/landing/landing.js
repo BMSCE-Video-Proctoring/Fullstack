@@ -42,6 +42,7 @@ const NavLinks = ({ isAuthenticated, handleLogout }) => (
 const Landing = () => {
 	const dispatch= useDispatch()
 	const [openDialog, setOpenDialog] = useState(false);
+	const [uniqueTestCode, setUniqueTestCode] = useState('');
   
 	const {isAuthenticated}= useSelector(state=> state.user)
 	useEffect(()=>{
@@ -63,6 +64,10 @@ const Landing = () => {
 
 	const cancelLogout = () => {
 		setOpenDialog(false);
+	};
+
+	const handleTestCodeChange = (e) => {
+		setUniqueTestCode(e.target.value);
 	};
 
 	return (
@@ -101,9 +106,9 @@ const Landing = () => {
 
 					<p className="desc">OR</p>
 					<div className="input-item unique-link">
-						<input type='text' placeholder="Unique test code" />
+						<input type='text' placeholder="Unique test code" value={uniqueTestCode} onChange={handleTestCodeChange} />
 						<span className="join-link">
-							<a href="/exam">Join</a>
+							<Link to={`/exam/${uniqueTestCode}`}>Join</Link>
 						</span>
 					</div>
 				</div>

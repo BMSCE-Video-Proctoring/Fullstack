@@ -1,185 +1,120 @@
-// import React from "react";
-// import "./examWindow.css";
-// import Timer from "../Timer"; // Import the Timer component
-
-// class ExamWindow extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = { localStream: null };
-//   }
-
-//   componentDidMount() {}
-
-//   startWebCam = () => {
-//     const that = this;
-//     navigator.mediaDevices
-//       .getUserMedia({
-//         audio: false,
-//         video: true
-//       })
-//       .then((stream) => {
-//         that.setState({ localStream: stream });
-//       });
-//   };
-
-//   stopWebCam = () => {
-//     this.state.localStream.getTracks().forEach((track) => {
-//       track.stop();
-//     });
-//   };
-
-//   render() {
-//     return (
-//       <div className="App">
-//         <div className="timer-container">
-//           <Timer /> {/* Render the Timer component */}
-//         </div>
-//         <div className="video-container">
-//           {this.state.localStream && (
-//             <video
-//               autoPlay
-//               ref={(video) => {
-//                 if (video) {
-//                   video.srcObject = this.state.localStream;
-//                 }
-//               }}
-//               className="video"
-//             />
-//           )}
-//           {/* Embed Google Form */}
-//           <iframe
-//             src="https://docs.google.com/forms/d/e/1FAIpQLSfPCdTm1_rJmcAvh8EmwCuaijVPPorYDi7UQZR95bICIMlNKg/viewform?embedded=true"
-//             frameborder="0"
-//             marginheight="0"
-//             marginwidth="0"
-//             title="Google Form"
-//             className="google-form"
-//           >
-//             Loading...
-//           </iframe>
-//         </div>
-//         <div className="startStopWebCam">
-//           <button
-//             className="WebCamButton"
-//             onClick={this.startWebCam.bind(this)}
-//           >
-//             Start
-//           </button>
-//           <button className="WebCamButton" onClick={this.stopWebCam.bind(this)}>
-//             Stop
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   }
-// }
-
-// export default ExamWindow;
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./examWindow.css";
-import Timer from "../Timer"; // Import the Timer component
+import Timer from "../Timer";
+import { useParams } from 'react-router-dom';
 import TimeUpModal from "../Components/TimeUpModal";
+import axios from 'axios';
 
-class ExamWindow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      localStream: null,
-      isTimeUp: false, // Add state variable to track if time is up
-      isModalOpen: false,
-    };
-  }
+const ExamWindow = () => {
+  const [localStream, setLocalStream] = useState(null);
+  const [isTimeUp, setIsTimeUp] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [testLink, setTestLink] = useState('');
 
-  componentDidMount() {
-    // Start the webcam when the component mounts
-    this.startWebCam();
-  }
+  // Duration in seconds as of now
+  const [testDuration, setTestDuration] = useState(0);
 
-  componentWillUnmount() {
-    // Stop the webcam when the component unmounts
-    this.stopWebCam();
-  }
+  // Timer component will only be rendered when the isLoading state is false
+  const [isLoading, setIsLoading] = useState(true);         
 
-  startWebCam = () => {
-    const that = this;
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: false,
-        video: true
+  const { testCode } = useParams();
+
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/createTest/${testCode}/`)
+      .then(response => {
+        const testDetails = response.data;
+        setTestLink(testDetails.link);
+        setTestDuration(testDetails.duration);
+        setIsLoading(false);      // Set loading to false after fetching data
       })
+      .catch(error => {
+        console.error('Error fetching test details:', error);
+        setIsLoading(false); // Set loading to false even on error
+      });
+
+    // Start the webcam when the component mounts
+    startWebCam();
+
+    return () => {
+      // Stop the webcam when the component unmounts
+      stopWebCam();
+    };
+  }, [testCode]);
+
+  const startWebCam = () => {
+    navigator.mediaDevices.getUserMedia({ audio: false, video: true })
       .then((stream) => {
-        that.setState({ localStream: stream });
+        setLocalStream(stream);
       });
   };
 
-  stopWebCam = () => {
-    if (this.state.localStream) {
-      this.state.localStream.getTracks().forEach((track) => {
+  const stopWebCam = () => {
+    if (localStream) {
+      localStream.getTracks().forEach((track) => {
         track.stop();
       });
     }
   };
 
-  handleTimeUp = () => {
+  const handleTimeUp = () => {
     // Called when the time is up
     // Set isTimeUp to true
     console.log("Timer has ended. Stopping camera.");
-    this.setState({ isTimeUp: true });
+    setIsTimeUp(true);
 
     // Show the modal when time is up
-    this.openModal();
+    openModal();
 
     // Stop the webcam
-    this.stopWebCam();
+    stopWebCam();
   };
 
-  openModal = () => {
-    this.setState({ isModalOpen: true });
+  const openModal = () => {
+    setIsModalOpen(true);
   };
 
-  closeModal = () => {
-    this.setState({ isModalOpen: false });
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
-  render() {
-    return (
-      <div className="App">
-        <div className="timer-container">
-          <Timer onTimeUp={this.handleTimeUp} />
-        </div>
-        <div className="video-container">
-          {this.state.localStream && (
-            <video
-              autoPlay
-              ref={(video) => {
-                if (video) {
-                  video.srcObject = this.state.localStream;
-                }
-              }}
-              className="video"
-            />
-          )}
-          {/* Embed Google Form */}
-          <iframe
-            src="https://docs.google.com/forms/d/e/1FAIpQLSfPCdTm1_rJmcAvh8EmwCuaijVPPorYDi7UQZR95bICIMlNKg/viewform?embedded=true"
-            frameBorder="0"
-            marginHeight="0"
-            marginWidth="0"
-            title="Google Form"
-            className="google-form"
-          >
-            Loading...
-          </iframe>
-        </div>
-        {/* Conditionally render the modal */}
-        {this.state.isModalOpen && (
-          <TimeUpModal onClose={this.closeModal} />
+  return (
+    <div className="App">
+      <div className="timer-container">
+        {!isLoading && (
+          <Timer onTimeUp={handleTimeUp} testDuration={testDuration} />
         )}
       </div>
-    );
-  }
-}
+      <div className="video-container">
+        {localStream && (
+          <video
+            autoPlay
+            ref={(video) => {
+              if (video) {
+                video.srcObject = localStream;
+              }
+            }}
+            className="video"
+          />
+        )}
+        {/* Embed Google Form */}
+        <iframe
+          src={testLink}
+          frameBorder="0"
+          marginHeight="0"
+          marginWidth="0"
+          title="Google Form"
+          className="google-form"
+        >
+          Loading...
+        </iframe>
+      </div>
+      {/* Conditionally render the modal */}
+      {isModalOpen && (
+        <TimeUpModal onClose={closeModal} />
+      )}
+    </div>
+  );
+};
 
 export default ExamWindow;
 

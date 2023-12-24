@@ -72,14 +72,14 @@ function App() {
         <Route path='/' element={<Landing />} />
         <Route path='/signup' element={<RegistrationForm />} />
         <Route path='/signin' element={<LoginPage />} />
-        <Route path='/exam' element={<LoginPage />} />
+        <Route path='/exam/:testCode' element={<LoginPage />} />
         <Route path='/createTest' element={<LoginPage />} />
       </Routes>
     ) : (
       <>
         <Routes>
           <Route path='/' element={<Landing />} />
-          <Route path='/exam' element={<ExamWindow />} />
+          <Route path='/exam/:testCode' element={<ExamWindow />} />
           <Route path='/createTest' element={<TestCreation />} />
         </Routes>
       </>

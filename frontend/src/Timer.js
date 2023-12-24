@@ -5,13 +5,15 @@ class Timer extends Component {
     super(props);
     this.state = {
       minutes: 0,
-      seconds: 20
+      seconds: props.testDuration,
+      values: props
     };
   }
 
   componentDidMount() {
     this.myInterval = setInterval(() => {
       const { minutes, seconds } = this.state;
+      console.log(this.state.values)
       if (seconds > 0) {
         this.setState(({ seconds }) => ({
           seconds: seconds - 1
