@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', views.send_some_data),
     path('', include('registrations.urls')),
-    path('', include('testcreation.urls')),
+    path('', include('testCreation.urls')),
 ]
