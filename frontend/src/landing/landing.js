@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import './landing.css'
+import { logoutUser, loadUser } from '../action/user';
+import {  useDispatch, useSelector } from 'react-redux';
+import { Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
 function handleClick(e) {
 	e.preventDefault()
 }
 
-const NavLinks = ({ isAuthenticated }) => (
+const NavLinks = ({ isAuthenticated, handleLogout }) => (
 	<React.Fragment>
 	  <p>
 		<Link to="/">Blog</Link> {/* Use Link */}
@@ -24,9 +27,9 @@ const NavLinks = ({ isAuthenticated }) => (
 	  <p>
 		<Link to="/">Contact Us</Link> {/* Use Link */}
 	  </p>
-	  {window.isAuth ? (
+	  {isAuthenticated ? (
 		<p>
-		  <Link to="/">Logout</Link> {/* Use Link */}
+		  <Link to="/" onClick={handleLogout} >Logout</Link> {/* Use Link */}
 		</p>
 	  ) : (
 		<p>
@@ -36,7 +39,32 @@ const NavLinks = ({ isAuthenticated }) => (
 	</React.Fragment>
   );
 
-const Landing = ({ isAuthenticated }) => {
+const Landing = () => {
+	const dispatch= useDispatch()
+	const [openDialog, setOpenDialog] = useState(false);
+  
+	const {isAuthenticated}= useSelector(state=> state.user)
+	useEffect(()=>{
+		dispatch(loadUser())
+	},[dispatch])
+
+	// const handleLogout = () => {
+	// 	dispatch(logoutUser());
+	// };
+
+	const handleLogout = () => {
+		setOpenDialog(true);
+	};
+	
+	const confirmLogout = () => {
+		setOpenDialog(false);
+		dispatch(logoutUser());
+	};
+
+	const cancelLogout = () => {
+		setOpenDialog(false);
+	};
+
 	return (
 		<React.Fragment>
 			
@@ -46,7 +74,7 @@ const Landing = ({ isAuthenticated }) => {
 					<img src={logo} alt="BMS-logo" />
 				</div>
 				<div className="landing-navbar-links">
-					<NavLinks isAuthenticated={isAuthenticated} />
+					<NavLinks isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
 				</div>
 
 			</div>
@@ -80,6 +108,19 @@ const Landing = ({ isAuthenticated }) => {
 					</div>
 				</div>
 			</div>
+
+			<Dialog open={openDialog} onClose={cancelLogout}>
+			<DialogTitle>Confirm Logout</DialogTitle>
+			<DialogContent>
+				<DialogContentText>
+					Are you sure you want to logout?
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={cancelLogout}>Cancel</Button>
+				<Button onClick={confirmLogout}>Logout</Button>
+			</DialogActions>
+      		</Dialog>
 
 
 		</React.Fragment>

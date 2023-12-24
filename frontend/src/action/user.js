@@ -41,7 +41,7 @@ export const loadUser=()=>async (dispatch)=>{
             type: 'loadUserRequest'
         })
 
-        const response= await axios.post('/api/isloggedin',{
+        const response= await axios.post('http://localhost:8000/isloggedin/',{
            token: `${localStorage.getItem('token')}`
         },{
             Headers:{
@@ -84,7 +84,7 @@ export const logoutUser=()=> async(dispatch)=>{
    }
 }
 
-export const signUpUser= (username,password)=> async(dispatch)=>{
+export const signUpUser= (username, name, email, password1, password2)=> async(dispatch)=>{
     try {
         dispatch({
             type:'signupRequest'
@@ -92,7 +92,10 @@ export const signUpUser= (username,password)=> async(dispatch)=>{
 
         const response= await axios.post('http://localhost:8000/signup/',{
            username: username,
-           password: password
+           name: name,
+           email: email,
+           password1: password1,
+           password2: password2
         },{
             Headers:{
                 'Content-Type':'application/json',
@@ -100,7 +103,7 @@ export const signUpUser= (username,password)=> async(dispatch)=>{
             },
             
         })
-        localStorage.setItem('token', response.data.token)
+        // localStorage.setItem('token', response.data.token)
 
         dispatch({
             type:'signupSuccess',
