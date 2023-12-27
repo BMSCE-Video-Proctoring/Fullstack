@@ -220,16 +220,21 @@ const ExamWindow = () => {
         canvas.toBlob(async (blob) => {
           const formData = new FormData();
           formData.append("frame", blob, "frame.jpg");
-          console.log('Sending frame to backend')
   
           // Send the frame to the Django backend
-          await axios.post("http://127.0.0.1:8000/analyze/", formData);
+          await axios.post("http://127.0.0.1:8000/analyze/", formData)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => {
+              console.error("Error sending frame:", error);
+            });
         }, 'image/jpeg');
       } catch (error) {
           console.error("Error capturing frame:", error);
       }
     }
-    
+
     // Capture and send frames at a specific interval (e.g., every second)
     const frameInterval = setInterval(sendFrameToBackend, 1000);
 
