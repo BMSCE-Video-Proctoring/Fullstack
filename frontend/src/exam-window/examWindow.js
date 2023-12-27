@@ -126,6 +126,7 @@ import Timer from "../Timer";
 import { useParams } from "react-router-dom";
 import TimeUpModal from "../Components/TimeUpModal";
 import axios from "axios";
+import { Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
 const ExamWindow = () => {
   const [localStream, setLocalStream] = useState(null);
@@ -135,6 +136,8 @@ const ExamWindow = () => {
   const [testDuration, setTestDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { testCode } = useParams();
+
+  const [openWarning, setOpenWarning] = useState(false);
 
   useEffect(() => {
     axios
@@ -225,6 +228,10 @@ const ExamWindow = () => {
           await axios.post("http://127.0.0.1:8000/analyze/", formData)
             .then(response => {
               console.log(response.data);
+              if(response.data.status === "suspicious") {
+                // Display a dialog box displaying that suspicious activity has been detected
+                handleWarning()
+              }
             })
             .catch(error => {
               console.error("Error sending frame:", error);
@@ -263,6 +270,14 @@ const ExamWindow = () => {
     setIsModalOpen(false);
   };
 
+  const handleWarning = () => {
+		setOpenWarning(true);
+	};
+
+	const closeWarning = () => {
+		setOpenWarning(false);
+	};
+
   return (
     <div className="App">
       <div className="timer-container">
@@ -293,6 +308,19 @@ const ExamWindow = () => {
           Loading...
         </iframe>
       </div>
+
+      <Dialog open={openWarning} onClose={closeWarning}>
+			<DialogTitle>WARNING</DialogTitle>
+			<DialogContent>
+				<DialogContentText>
+					Suspicious activity detected. Please refrain from cheating.
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={closeWarning}>OK</Button>
+			</DialogActions>
+      </Dialog>
+
       {isModalOpen && <TimeUpModal onClose={closeModal} />}
     </div>
   );
