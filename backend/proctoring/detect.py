@@ -61,7 +61,7 @@ def detectGestures(frame):
                 landmarks.append([lmx, lmy])
 
             # Predict gesture
-            prediction = gestureModel.predict([landmarks])
+            prediction = gestureModel([landmarks])
             # print(prediction)
             classID = np.argmax(prediction)
             className = gestureClassNames[classID]
