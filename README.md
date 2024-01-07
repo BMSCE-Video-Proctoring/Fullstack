@@ -5,7 +5,7 @@ This is a comprehensive video proctoring system designed to enhance the integrit
 
 ## Prerequisites
 
-Since this repository contains files (ML models) >100MB, you may have to install git lfs to correctly clone the large files. For more information on installing and setting up git lfs, check out the [official website](https://git-lfs.com/)
+Since this repository contains large files (ML models) >50MB, you may have to install git lfs to correctly clone the large files. For more information on installing and setting up git lfs, check out the [official website](https://git-lfs.com/)
 
 If you want to run the code using Docker, then the only prerequisite required is **Docker**.
 
