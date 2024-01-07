@@ -135,6 +135,7 @@ const ExamWindow = () => {
   const [testLink, setTestLink] = useState("");
   const [testDuration, setTestDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [warningMessage, setWarningMessage] = useState("");
   const { testCode } = useParams();
 
   const [openWarning, setOpenWarning] = useState(false);
@@ -229,6 +230,8 @@ const ExamWindow = () => {
             .then(response => {
               console.log(response.data);
               if(response.data.status === "suspicious") {
+                setWarningMessage(response.data.message);
+
                 // Display a dialog box displaying that suspicious activity has been detected
                 handleWarning()
               }
@@ -243,7 +246,7 @@ const ExamWindow = () => {
     }
 
     // Capture and send frames at a specific interval (e.g., every second)
-    const frameInterval = setInterval(sendFrameToBackend, 1000);
+    const frameInterval = setInterval(sendFrameToBackend, 700);
 
     // Stop capturing frames when the component unmounts
     return () => clearInterval(frameInterval);
@@ -313,7 +316,7 @@ const ExamWindow = () => {
 			<DialogTitle>WARNING</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
-					Suspicious activity detected. Please refrain from cheating.
+          {warningMessage}
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
